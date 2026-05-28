@@ -78,6 +78,48 @@ let readLimitState = {
 let isNightMode = false;
 let activeSelectedColor = PASTEL_COLORS[0].value;
 
+// ==================== BOTTLE ID / URL ROUTING ====================
+// Generates a fun random bottle name like "cozy-rose-4821"
+const BOTTLE_ADJECTIVES = ["cozy", "sweet", "magic", "starry", "dreamy", "golden", "velvet", "lunar", "rosy"];
+const BOTTLE_NOUNS      = ["rose", "moon", "star", "heart", "wish", "dream", "cloud", "spark", "dawn"];
+
+function generateBottleId() {
+  const adj  = BOTTLE_ADJECTIVES[Math.floor(Math.random() * BOTTLE_ADJECTIVES.length)];
+  const noun = BOTTLE_NOUNS[Math.floor(Math.random() * BOTTLE_NOUNS.length)];
+  const num  = Math.floor(1000 + Math.random() * 9000);
+  return `${adj}-${noun}-${num}`;
+}
+
+function getBottleId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("bottle") || null;
+}
+
+function setBottleId(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("bottle", id);
+  window.history.replaceState({}, "", url.toString());
+}
+
+function getShareableUrl() {
+  const id  = getBottleId();
+  const url = new URL(window.location.href);
+  url.searchParams.set("bottle", id);
+  // Strip any extra params, keep clean
+  return `${url.origin}${url.pathname}?bottle=${id}`;
+}
+
+// Determine if we are running on Vercel (i.e. cloud API available)
+function isCloudAvailable() {
+  // When hosted on Vercel the origin will NOT be file:// or localhost
+  const { protocol, hostname } = window.location;
+  if (protocol === "file:") return false;
+  if (hostname === "localhost" || hostname === "127.0.0.1") return false;
+  return true;
+}
+
+let cloudSyncEnabled = false; // updated after first successful API call
+
 // Star Bottle SVG Polygon Bounding Coordinates (to clip stars within the star shape outline)
 const BOTTLE_STAR_POLYGON = [
   [200, 130], // Top peak
@@ -179,28 +221,42 @@ themeToggleBtn.addEventListener("click", () => {
 });
 
 // ==================== STATE MANAGEMENT ====================
-function loadState() {
-  // Load notes
-  const savedNotes = localStorage.getItem("star_bottle_notes");
-  if (savedNotes) {
-    notes = JSON.parse(savedNotes);
-  } else {
-    notes = [...DEFAULT_NOTES];
-    localStorage.setItem("star_bottle_notes", JSON.stringify(notes));
+
+// localStorage key helpers — scoped per bottle so different bottles don't bleed
+function lsNotesKey()  { return `star_bottle_notes__${getBottleId()}`; }
+function lsLimitKey()  { return `star_bottle_limit__${getBottleId()}`; }
+
+async function loadState() {
+  // 1 — Ensure a bottle ID exists in the URL
+  let bottleId = getBottleId();
+  if (!bottleId) {
+    // Check if there's a legacy local bottle to migrate
+    const legacyNotes = localStorage.getItem("star_bottle_notes");
+    bottleId = generateBottleId();
+    setBottleId(bottleId);
+    if (legacyNotes) {
+      // Migrate legacy notes to the new scoped key
+      localStorage.setItem(lsNotesKey(), legacyNotes);
+      localStorage.removeItem("star_bottle_notes");
+    }
   }
 
-  // Load read limit
-  const savedLimit = localStorage.getItem("star_bottle_read_limit");
+  // 2 — Try to load notes from cloud, fall back to localStorage
+  if (isCloudAvailable()) {
+    await loadFromCloud();
+  } else {
+    loadFromLocal();
+    setCloudStatus("local", "Local mode (not deployed)");
+  }
+
+  // 3 — Load read limit (always local — per device/person)
+  const savedLimit = localStorage.getItem(lsLimitKey());
   if (savedLimit) {
     readLimitState = JSON.parse(savedLimit);
   } else {
-    readLimitState = {
-      date: getTodayString(),
-      openedIds: []
-    };
+    readLimitState = { date: getTodayString(), openedIds: [] };
   }
 
-  // If calendar date changed, reset the read counts!
   const todayStr = getTodayString();
   if (readLimitState.date !== todayStr) {
     readLimitState.date = todayStr;
@@ -209,21 +265,123 @@ function loadState() {
   }
 
   updateUI();
+  updateLinkTab();
 }
 
-function saveNotesState() {
-  localStorage.setItem("star_bottle_notes", JSON.stringify(notes));
+function loadFromLocal() {
+  const saved = localStorage.getItem(lsNotesKey());
+  if (saved) {
+    notes = JSON.parse(saved);
+  } else {
+    notes = [...DEFAULT_NOTES];
+    localStorage.setItem(lsNotesKey(), JSON.stringify(notes));
+  }
+}
+
+async function loadFromCloud() {
+  setCloudStatus("connecting", "Connecting to cloud...");
+  try {
+    const bottleId = getBottleId();
+    const res = await fetch(`/api/notes?bottle=${encodeURIComponent(bottleId)}`);
+    const data = await res.json();
+
+    if (data.code === "KV_NOT_CONFIGURED") {
+      // Cloud is deployed but KV not connected yet — fall back gracefully
+      loadFromLocal();
+      setCloudStatus("local", "Cloud not configured — using local storage", true);
+      return;
+    }
+
+    if (!res.ok) throw new Error(data.error || "Unknown API error");
+
+    cloudSyncEnabled = true;
+
+    if (data.notes && data.notes.length > 0) {
+      notes = data.notes;
+      // Mirror to local as cache
+      localStorage.setItem(lsNotesKey(), JSON.stringify(notes));
+    } else {
+      // Cloud is empty — seed with local (if any) or defaults
+      const localCache = localStorage.getItem(lsNotesKey());
+      notes = localCache ? JSON.parse(localCache) : [...DEFAULT_NOTES];
+      // Push up to cloud immediately
+      await pushToCloud();
+    }
+
+    setCloudStatus("connected", "✅ Cloud synced — sharing is live!");
+  } catch (err) {
+    console.warn("Cloud load failed, falling back to local:", err);
+    loadFromLocal();
+    setCloudStatus("error", "Cloud unavailable — using local storage");
+  }
+}
+
+async function pushToCloud() {
+  if (!cloudSyncEnabled) return;
+  try {
+    const bottleId = getBottleId();
+    await fetch(`/api/notes?bottle=${encodeURIComponent(bottleId)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notes })
+    });
+  } catch (err) {
+    console.warn("Cloud push failed:", err);
+  }
+}
+
+async function saveNotesState() {
+  // Always persist locally as cache
+  localStorage.setItem(lsNotesKey(), JSON.stringify(notes));
+  // Also push to cloud if available
+  await pushToCloud();
   updateUI();
 }
 
 function saveLimitState() {
-  localStorage.setItem("star_bottle_read_limit", JSON.stringify(readLimitState));
+  localStorage.setItem(lsLimitKey(), JSON.stringify(readLimitState));
   updateLimitUI();
 }
 
 function getTodayString() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// ==================== CLOUD STATUS UI ====================
+function setCloudStatus(state, label, showSetup = false) {
+  const dot   = document.getElementById("cloud-dot");
+  const lbl   = document.getElementById("cloud-label");
+  const syncDesc  = document.getElementById("sync-status-desc");
+  const syncIcon  = document.getElementById("sync-status-icon");
+  const setupSteps = document.getElementById("setup-steps");
+
+  // Map states
+  const stateMap = {
+    connected:   { cls: "connected", icon: "✅" },
+    local:       { cls: "local",     icon: "💾" },
+    error:       { cls: "error",     icon: "⚠️" },
+    connecting:  { cls: "",          icon: "☁️" }
+  };
+  const cfg = stateMap[state] || stateMap.connecting;
+
+  if (dot) { dot.className = `cloud-dot ${cfg.cls}`; }
+  if (lbl) { lbl.textContent = label; }
+  if (syncDesc) { syncDesc.textContent = label; }
+  if (syncIcon) { syncIcon.textContent = cfg.icon; }
+  if (setupSteps) { setupSteps.style.display = showSetup ? "block" : "none"; }
+}
+
+// ==================== LINK TAB UI ====================
+function updateLinkTab() {
+  const bottleId = getBottleId();
+  const shareableUrl = getShareableUrl();
+
+  const idDisplay   = document.getElementById("bottle-id-display");
+  const linkDisplay = document.getElementById("shareable-link-display");
+
+  if (idDisplay)   idDisplay.textContent   = bottleId || "";
+  if (linkDisplay) linkDisplay.value       = shareableUrl;
 }
 
 // ==================== UI RENDERING ====================
@@ -522,7 +680,7 @@ function updateLivePreview() {
 }
 
 // Save or Edit submit action
-noteForm.addEventListener("submit", (e) => {
+noteForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   
   const id = editNoteIdIn.value;
@@ -551,7 +709,7 @@ noteForm.addEventListener("submit", (e) => {
     notes.push(noteData);
   }
 
-  saveNotesState();
+  await saveNotesState();
   
   // Reset form
   resetWriterForm();
@@ -607,10 +765,10 @@ function resetWriterForm() {
   updateLivePreview();
 }
 
-function deleteNote(id) {
+async function deleteNote(id) {
   if (confirm("Are you sure you want to burn this star note? It will disappear from the bottle forever! 🔥")) {
     notes = notes.filter(n => n.id !== id);
-    saveNotesState();
+    await saveNotesState();
   }
 }
 
@@ -693,6 +851,113 @@ devResetBtn.addEventListener("click", () => {
   saveLimitState();
   alert("Daily read limit reset! Read as many stars as you want for testing! ✨");
 });
+
+// ==================== SHARE / LINK TAB LOGIC ====================
+
+// Share Bottle button (header) — copies link to clipboard
+const shareBottleBtn = document.getElementById("share-bottle-btn");
+if (shareBottleBtn) {
+  shareBottleBtn.addEventListener("click", () => {
+    copyShareLink(shareBottleBtn);
+  });
+}
+
+// Copy link button inside Writer's Desk Bottle Link tab
+const copyLinkBtn = document.getElementById("copy-link-btn");
+if (copyLinkBtn) {
+  copyLinkBtn.addEventListener("click", () => {
+    copyShareLink(copyLinkBtn);
+  });
+}
+
+function copyShareLink(triggerEl) {
+  const url = getShareableUrl();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      showCopiedFeedback(triggerEl);
+    }).catch(() => fallbackCopy(url, triggerEl));
+  } else {
+    fallbackCopy(url, triggerEl);
+  }
+}
+
+function fallbackCopy(text, triggerEl) {
+  const el = document.createElement("textarea");
+  el.value = text;
+  el.style.position = "fixed";
+  el.style.opacity  = "0";
+  document.body.appendChild(el);
+  el.focus();
+  el.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(el);
+  showCopiedFeedback(triggerEl);
+}
+
+function showCopiedFeedback(el) {
+  const original = el.innerHTML;
+  el.innerHTML = "Copied! 💚";
+  el.classList.add("copied");
+  setTimeout(() => {
+    el.innerHTML = original;
+    el.classList.remove("copied");
+  }, 2200);
+}
+
+// Apply custom bottle name
+const applyCustomNameBtn = document.getElementById("apply-custom-name-btn");
+const customNameInput    = document.getElementById("custom-bottle-name-input");
+const customNameHint     = document.getElementById("custom-name-hint");
+
+if (applyCustomNameBtn && customNameInput) {
+  applyCustomNameBtn.addEventListener("click", async () => {
+    const raw = customNameInput.value.trim().toLowerCase();
+    if (!raw) {
+      showNameHint("Please enter a bottle name! 💕", "error");
+      return;
+    }
+    // Validate: only letters, numbers, dashes
+    if (!/^[a-z0-9-]+$/.test(raw)) {
+      showNameHint("Only lowercase letters, numbers and dashes allowed!", "error");
+      return;
+    }
+    if (raw.length < 3) {
+      showNameHint("Name must be at least 3 characters!", "error");
+      return;
+    }
+
+    // Save current notes to old bottle before switching
+    await pushToCloud();
+
+    // Switch to new bottle ID
+    setBottleId(raw);
+    // Cloud sync: try to load notes from new bottle
+    // (if empty on cloud, we'll push our current notes)
+    if (isCloudAvailable()) {
+      cloudSyncEnabled = true;
+      await loadFromCloud();
+    } else {
+      // Local only: copy notes under new key
+      localStorage.setItem(lsNotesKey(), JSON.stringify(notes));
+    }
+
+    updateUI();
+    updateLinkTab();
+    customNameInput.value = "";
+    showNameHint(`Bottle renamed to "${raw}"! Share the link below 🌟`, "success");
+  });
+}
+
+function showNameHint(msg, type) {
+  if (!customNameHint) return;
+  customNameHint.textContent = msg;
+  customNameHint.className = `custom-name-hint ${type}`;
+  clearTimeout(customNameHint._timer);
+  customNameHint._timer = setTimeout(() => {
+    customNameHint.textContent = "";
+    customNameHint.className   = "custom-name-hint";
+  }, 4000);
+}
 
 // ==================== BACKGROUND NIGHT CANVAS ====================
 let particleId = null;
@@ -834,11 +1099,11 @@ function loopSparkles(canvas, ctx) {
 }
 
 // ==================== APP INITIALIZATION ====================
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   initTheme();
-  loadState();
+  await loadState();
   initWriterForm();
-  
+
   // Periodically check time to switch modes (every minute)
   setInterval(initTheme, 60000);
 });

@@ -25,6 +25,16 @@
   <header class="app-header">
     <h1 class="logo">Star Bottle</h1>
     <div class="theme-status" id="theme-status">It's cozy daytime... 🧸</div>
+    <!-- Share Bottle Button -->
+    <button class="share-bottle-btn" id="share-bottle-btn" title="Share this bottle link">
+      <span class="share-icon">🔗</span>
+      <span class="share-label">Share Bottle</span>
+    </button>
+    <!-- Cloud Sync Status Indicator -->
+    <div class="cloud-status-badge" id="cloud-status-badge">
+      <span class="cloud-dot" id="cloud-dot"></span>
+      <span class="cloud-label" id="cloud-label">connecting...</span>
+    </div>
   </header>
 
   <!-- Main Container -->
@@ -218,6 +228,7 @@
       <div class="desk-tabs">
         <button class="tab-btn active" data-tab="tab-write">Fold a Star 🌟</button>
         <button class="tab-btn" data-tab="tab-manage">Star Collection 📁</button>
+        <button class="tab-btn" data-tab="tab-link">Bottle Link 🔗</button>
       </div>
 
       <!-- Tab Content: Write/Edit Note -->
@@ -311,6 +322,76 @@
         
         <div class="notes-list-container" id="notes-list-container">
           <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Tab Content: Bottle Link & Sharing -->
+      <div class="tab-content" id="tab-link">
+        <div class="link-tab-inner">
+
+          <!-- Current Bottle ID display -->
+          <div class="link-section">
+            <div class="link-section-header">
+              <span class="link-section-icon">🫙</span>
+              <div>
+                <h4>Your Bottle Name</h4>
+                <p>This is the unique name that identifies your shared space</p>
+              </div>
+            </div>
+            <div class="bottle-id-display" id="bottle-id-display">loading...</div>
+          </div>
+
+          <!-- Custom name input -->
+          <div class="link-section">
+            <div class="link-section-header">
+              <span class="link-section-icon">✏️</span>
+              <div>
+                <h4>Customise Bottle Name</h4>
+                <p>Use letters, numbers and dashes only (e.g. jess-and-alex)</p>
+              </div>
+            </div>
+            <div class="custom-name-row">
+              <input type="text" id="custom-bottle-name-input" placeholder="e.g. our-cozy-space" maxlength="40" autocomplete="off" spellcheck="false">
+              <button class="action-btn" id="apply-custom-name-btn">Apply ✨</button>
+            </div>
+            <p class="custom-name-hint" id="custom-name-hint"></p>
+          </div>
+
+          <!-- Shareable link -->
+          <div class="link-section">
+            <div class="link-section-header">
+              <span class="link-section-icon">🔗</span>
+              <div>
+                <h4>Shareable Link</h4>
+                <p>Send this link to your boyfriend so he sees the same bottle!</p>
+              </div>
+            </div>
+            <div class="share-link-box">
+              <input type="text" id="shareable-link-display" readonly>
+              <button class="action-btn copy-link-btn" id="copy-link-btn">Copy 💕</button>
+            </div>
+          </div>
+
+          <!-- Sync status -->
+          <div class="link-section cloud-info-section">
+            <div class="link-section-header">
+              <span class="link-section-icon" id="sync-status-icon">☁️</span>
+              <div>
+                <h4>Sync Status</h4>
+                <p id="sync-status-desc">Checking connection...</p>
+              </div>
+            </div>
+            <div class="setup-steps" id="setup-steps" style="display:none;">
+              <p class="setup-title">⚙️ To enable permanent shared storage:</p>
+              <ol>
+                <li>Go to your <strong>Vercel Dashboard</strong> → your project</li>
+                <li>Click the <strong>Storage</strong> tab</li>
+                <li>Click <strong>Connect Database</strong> → select <strong>KV</strong></li>
+                <li>Accept defaults and redeploy!</li>
+              </ol>
+            </div>
+          </div>
+
         </div>
       </div>
 
