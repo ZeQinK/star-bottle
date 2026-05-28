@@ -1,0 +1,1051 @@
+/* 
+   Star Bottle - Premium Design Stylesheet 
+   Vanilla CSS Design System 
+*/
+
+:root {
+  /* Cozy Day Mode (Default) */
+  --bg-primary: #fdfbf7;
+  --bg-secondary: #f6efe9;
+  --text-primary: #4e403d;
+  --text-secondary: #8c7873;
+  --accent: #e5989b;
+  --accent-light: #ffccd5;
+  --accent-glow: rgba(229, 152, 155, 0.35);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --border-color: #e9e0d6;
+  --bottle-neon: rgba(255, 238, 204, 0.3);
+  --shadow-color: rgba(78, 64, 61, 0.06);
+  --glass-glow: 0 10px 40px rgba(229, 152, 155, 0.15);
+  --transition-speed: 0.8s; /* Smooth cozy transition */
+}
+
+/* Night Mode (Magical Night Glow) */
+body.night-mode {
+  --bg-primary: #0a0b18;
+  --bg-secondary: #131428;
+  --text-primary: #f4f4fa;
+  --text-secondary: #a9a9c6;
+  --accent: #f72585;
+  --accent-light: #ff758f;
+  --accent-glow: rgba(247, 37, 133, 0.6);
+  --card-bg: rgba(20, 21, 45, 0.85);
+  --border-color: #2d2e54;
+  --bottle-neon: #7209b7;
+  --shadow-color: rgba(0, 0, 0, 0.45);
+  --glass-glow: 0 0 45px rgba(114, 9, 183, 0.65), 0 0 20px rgba(247, 37, 133, 0.3);
+  --transition-speed: 0.8s;
+}
+
+/* Reset and Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent; /* No mobile tap highlight box */
+}
+
+body {
+  font-family: 'Comfortaa', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+/* Starry Canvas overlay for night mode */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+body.night-mode #particle-canvas {
+  opacity: 1;
+}
+
+/* Header Styles */
+.app-header {
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  padding: 30px 20px 10px;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+  filter: drop-shadow(0 2px 4px var(--shadow-color));
+}
+
+.theme-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  display: inline-block;
+  padding: 6px 14px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+/* Theme Toggle Button */
+.dev-theme-toggle {
+  position: absolute;
+  top: 25px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  font-size: 1.25rem;
+  transition: transform 0.3s ease, background-color var(--transition-speed) ease;
+}
+
+.dev-theme-toggle:hover {
+  transform: scale(1.08) rotate(15deg);
+}
+
+/* Main Content Container */
+.main-container {
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px 40px;
+  z-index: 10;
+}
+
+/* Bottle Wrapper & Glow */
+.bottle-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.bottle-glow {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  filter: blur(15px);
+  z-index: -1;
+  opacity: 0.6;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 60%;
+  transition: background var(--transition-speed) ease, opacity 0.5s ease;
+}
+
+body.night-mode .bottle-glow {
+  background: radial-gradient(circle, var(--bottle-neon) 0%, rgba(247, 37, 133, 0.2) 50%, transparent 75%);
+  opacity: 0.95;
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1.0); opacity: 0.9; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
+}
+
+/* Star Bottle SVG Animations */
+.star-bottle-svg {
+  cursor: pointer;
+  transition: filter var(--transition-speed) ease, transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 15px 35px var(--shadow-color));
+}
+
+.star-bottle-svg:hover {
+  transform: scale(1.02);
+}
+
+.star-bottle-svg:active {
+  transform: scale(0.96) rotate(-2deg);
+}
+
+/* Shake Animation triggered programmatically */
+.bottle-shake {
+  animation: shake-bottle 0.6s ease-in-out;
+}
+
+@keyframes shake-bottle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  15% { transform: scale(1.02) rotate(-6deg); }
+  30% { transform: scale(0.98) rotate(5deg); }
+  45% { transform: scale(1.01) rotate(-4deg); }
+  60% { transform: scale(0.99) rotate(3deg); }
+  75% { transform: scale(1.00) rotate(-1deg); }
+}
+
+/* Glass Bottle styling based on mode */
+.glass-star-body {
+  transition: stroke var(--transition-speed) ease, fill var(--transition-speed) ease, filter var(--transition-speed) ease;
+  stroke: #cca693; /* Premium metallic gold-bronze outline in day time */
+  stroke-width: 5.5px;
+  fill: rgba(255, 255, 255, 0.65); /* Semi-opaque frosty fill to stand out in day time */
+  filter: drop-shadow(0 15px 30px rgba(204, 166, 147, 0.18));
+}
+
+body.night-mode .glass-star-body {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 4.5px;
+  fill: rgba(255, 255, 255, 0.05); /* Deep dark space transparency */
+  filter: drop-shadow(0 0 15px var(--accent-light));
+}
+
+/* Glass neck pop */
+.star-bottle-svg path[stroke="rgba(255,255,255,0.7)"] {
+  stroke: #cca693 !important;
+  stroke-width: 2.5px !important;
+  transition: stroke var(--transition-speed) ease;
+}
+body.night-mode .star-bottle-svg path[stroke="rgba(255,255,255,0.7)"] {
+  stroke: rgba(255,255,255,0.7) !important;
+  stroke-width: 2px !important;
+}
+
+/* Floating Stars Inside Bottle */
+.bottle-star {
+  transform-origin: center;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+  cursor: pointer;
+}
+
+.bottle-star:hover {
+  filter: brightness(1.2) drop-shadow(0 0 4px rgba(255,255,255,0.8));
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(6deg); }
+}
+
+/* Stats Panel & Counter */
+.stats-panel {
+  width: 100%;
+  text-align: center;
+}
+
+.click-prompt {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 12px;
+  letter-spacing: 0.2px;
+  animation: float-text 2s infinite ease-in-out;
+}
+
+@keyframes float-text {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Stars Bottle Count Indicator on Main Page */
+.stars-bottle-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 8px 18px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  margin-bottom: 12px;
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.count-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.count-badge {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+  background-color: var(--bg-secondary);
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.read-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 8px 18px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.counter-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.counter-stars-container {
+  display: flex;
+  gap: 4px;
+}
+
+.mini-star {
+  font-size: 1.15rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.mini-star.filled {
+  color: #ffb703;
+  transform: scale(1.1);
+  text-shadow: 0 0 4px rgba(255, 183, 3, 0.4);
+}
+
+.mini-star.empty {
+  color: var(--border-color);
+}
+
+/* Floating Secret Key Button */
+.secret-key-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  font-size: 1.25rem;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color var(--transition-speed) ease;
+}
+
+.secret-key-btn:hover {
+  transform: scale(1.1) rotate(-15deg);
+}
+
+/* Modals System styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(28, 26, 25, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px;
+}
+
+body.night-mode .modal-overlay {
+  background-color: rgba(5, 6, 15, 0.6);
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px var(--shadow-color);
+  width: 100%;
+  max-width: 420px;
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-overlay.active .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0,0,0,0.05);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.close-modal-btn:hover {
+  background: rgba(0,0,0,0.1);
+  color: var(--text-primary);
+}
+
+/* ==================== PASSCODE CARD ==================== */
+.passcode-card {
+  padding: 30px;
+  text-align: center;
+  max-width: 340px;
+}
+
+.lock-icon {
+  font-size: 2.2rem;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.passcode-header h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.passcode-header p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.passcode-body input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border-color 0.3s ease, background-color var(--transition-speed) ease;
+}
+
+.passcode-body input:focus {
+  border-color: var(--accent);
+}
+
+.error-msg {
+  font-size: 0.8rem;
+  color: #d90429;
+  font-weight: 600;
+  margin-top: 10px;
+  display: none;
+}
+
+/* Premium Buttons Styling */
+.action-btn {
+  background: linear-gradient(135deg, var(--accent), #ff758f);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(229, 152, 155, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 6px 18px rgba(229, 152, 155, 0.5);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.block-btn {
+  width: 100%;
+}
+
+.secondary-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+
+.secondary-btn:hover {
+  background: var(--border-color);
+  box-shadow: none;
+}
+
+/* ==================== CUTE LIMIT CARD ==================== */
+.cute-alert-card {
+  padding: 35px 30px;
+  text-align: center;
+  max-width: 360px;
+}
+
+.alert-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  animation: rotate-slow 6s infinite linear;
+}
+
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cute-alert-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.cute-alert-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.cozy-quote {
+  font-style: italic;
+  font-family: 'Playpen Sans', handwriting;
+  font-size: 0.85rem !important;
+  color: var(--accent) !important;
+  background-color: var(--bg-secondary);
+  padding: 10px;
+  border-radius: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+/* ==================== NOTE READER CARD & PAPER DESIGNS ==================== */
+.note-reader-card-wrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 380px;
+  padding: 10px;
+}
+
+.dark-close {
+  background: rgba(255,255,255,0.15) !important;
+  color: white !important;
+  top: -10px !important;
+  right: 0px !important;
+}
+
+#reader-sparkle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.reader-footer-actions {
+  margin-top: 20px;
+  width: 100%;
+  z-index: 10;
+}
+
+.close-action-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #2b2d42, #1a1c2e);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+body.night-mode .close-action-btn {
+  background: linear-gradient(135deg, var(--accent), #ff758f);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+/* The Beautiful Physical Note Paper */
+.note-paper {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  z-index: 2;
+  color: #333333; /* Make text dark for readable contrast on paper colors */
+}
+
+/* Note Paper Content */
+.note-text-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  z-index: 3;
+}
+
+.note-handwriting {
+  font-family: 'Playpen Sans', cursive;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-weight: 600;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  color: inherit;
+  width: 100%;
+}
+
+.paper-emoji-decoration {
+  font-size: 1.15rem;
+  letter-spacing: 6px;
+  z-index: 3;
+  opacity: 0.85;
+}
+
+.top-decor {
+  margin-bottom: 10px;
+}
+
+.bottom-decor {
+  margin-top: 10px;
+}
+
+/* --- Note Shapes --- */
+.shape-card {
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.shape-card::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px; right: 8px; bottom: 8px;
+  border: 1px dashed rgba(0,0,0,0.1);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.shape-scalloped {
+  border-radius: 28px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  border: 6px double rgba(0, 0, 0, 0.12);
+}
+
+.shape-scroll {
+  border-radius: 6px;
+  box-shadow: inset 0 12px 12px -5px rgba(0,0,0,0.06), 
+              inset 0 -12px 12px -5px rgba(0,0,0,0.06),
+              0 15px 30px rgba(0,0,0,0.12);
+  border-left: 12px solid rgba(0,0,0,0.06);
+  border-right: 12px solid rgba(0,0,0,0.06);
+}
+
+.shape-heart {
+  border-radius: 50% 50% 50% 50% / 38% 38% 62% 62%;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  padding: 40px 30px;
+}
+
+/* --- Note Design Patterns --- */
+.pattern-plain {
+  background-color: var(--paper-color);
+}
+
+.pattern-grid {
+  background-color: var(--paper-color);
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.pattern-dotted {
+  background-color: var(--paper-color);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+.pattern-stripes {
+  background-color: var(--paper-color);
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0,0,0,0.02) 8px, rgba(0,0,0,0.02) 16px);
+}
+
+.pattern-hearts {
+  background-color: var(--paper-color);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M12,7 C12,4 9,4 9,7 C9,10 12,12 12,13 C12,12 15,10 15,7 C15,4 12,4 12,7 Z' fill='rgba(235,90,110,0.05)'/></svg>");
+  background-size: 24px 24px;
+}
+
+/* ==================== WRITER'S DESK CARD (Full Panel) ==================== */
+.writer-desk-card {
+  width: 95%;
+  max-width: 800px;
+  height: 90vh;
+  max-height: 650px;
+  display: flex;
+  flex-direction: column;
+}
+
+.desk-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.desk-header h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Tab Button Bar */
+.desk-tabs {
+  display: flex;
+  background-color: var(--bg-secondary);
+  padding: 4px;
+  margin: 15px 24px 0;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-btn.active {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+/* Tab Content */
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* 2-Column Layout inside Writing tab */
+.writer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  height: 100%;
+}
+
+@media (max-width: 680px) {
+  .writer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .writer-preview-panel {
+    display: none; /* Hide preview on smaller phones to fit form */
+  }
+  .writer-desk-card {
+    height: 95vh;
+  }
+}
+
+.writer-form-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s ease, background-color var(--transition-speed) ease;
+}
+
+.form-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color var(--transition-speed) ease;
+}
+
+/* Star Color Options Picker */
+.color-options-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.color-dot.active {
+  border-color: #333;
+  transform: scale(1.1);
+}
+
+body.night-mode .color-dot.active {
+  border-color: #fff;
+}
+
+/* Real-time Preview Panel styling */
+.writer-preview-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.preview-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 15px;
+}
+
+.preview-wrapper {
+  width: 100%;
+  max-width: 250px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ==================== MANAGE STARS TAB ==================== */
+.manage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.dev-reset-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, #6c757d, #495057);
+  box-shadow: none;
+}
+
+.dev-reset-btn:hover {
+  box-shadow: none;
+  filter: brightness(1.1);
+}
+
+.notes-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.note-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-radius: 14px;
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.note-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.note-item-star-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.note-item-text {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.note-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.mini-icon-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.mini-icon-btn:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.mini-icon-btn.delete-btn:hover {
+  background: #d90429;
+  border-color: #d90429;
+}
+
+/* Scrollbar Customization for scroll containers */
+.notes-list-container::-webkit-scrollbar,
+.tab-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notes-list-container::-webkit-scrollbar-track,
+.tab-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notes-list-container::-webkit-scrollbar-thumb,
+.tab-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 20px;
+}

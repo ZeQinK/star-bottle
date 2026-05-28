@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lost in the Stars 🌌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Playpen+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #fdfbf7;
+      --text-primary: #4e403d;
+      --text-secondary: #8c7873;
+      --accent: #e5989b;
+      --border-color: #e9e0d6;
+    }
+    
+    body.night-mode {
+      --bg-primary: #0a0b18;
+      --text-primary: #f4f4fa;
+      --text-secondary: #a9a9c6;
+      --accent: #f72585;
+      --border-color: #2d2e54;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Comfortaa', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-sizing: border-box;
+      transition: background-color 0.8s ease, color 0.8s ease;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 400px;
+      z-index: 10;
+    }
+
+    .emoji {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(8deg); }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+    }
+
+    .home-btn {
+      background: linear-gradient(135deg, var(--accent), #ff758f);
+      color: white;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(229, 152, 155, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .home-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(229, 152, 155, 0.5);
+    }
+
+    .home-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="emoji">🛸🌟</div>
+    <h1>Lost in Space...</h1>
+    <p>It seems this star note has drifted away into another galaxy or was burned to ashes. Let's return back to the bottle!</p>
+    <a href="/" class="home-btn">Return to Bottle ❤️</a>
+  </div>
+
+  <script>
+    // Keep 404 styling synced with current local hour
+    const currentHour = new Date().getHours();
+    if (currentHour >= 18 || currentHour < 7) {
+      document.body.classList.add("night-mode");
+    }
+  </script>
+</body>
+</html>
