@@ -7,47 +7,146 @@
 const DEFAULT_NOTES = [
   {
     id: "seed-1",
-    text: "My favorite place in the entire world is next to you. You are my safe haven, my peace, and my greatest adventure. I love you so much! ❤️",
-    shape: "card",
+    text: "My bb miss me shibushiii? I miss you too bb ❤️ Always remember I love you and I will always support you no matter what <3 Send me a video note when you open this note!",
+    shape: "heart",
     color: "#ffccd5", // Soft Pink
     pattern: "hearts",
     emojiTheme: "hearts",
-    createdAt: Date.now() - 50000
+    createdAt: Date.now() - 160000
   },
   {
     id: "seed-2",
-    text: "Just a gentle reminder that you are doing incredibly well. Don't stress too much, my handsome boy. I am always right here, cheering you on! ✨🌸",
+    text: "You are doing incredibly well and I am so so proud of you biii.  You are the world's best hamster and zui lihai der hamsterr 🐹 ti amoo",
     shape: "scalloped",
-    color: "#e2e2ff", // Lilac
+    color: "#fefae0", // Custard Yellow
     pattern: "dotted",
-    emojiTheme: "flowers",
-    createdAt: Date.now() - 40000
+    emojiTheme: "cats",
+    createdAt: Date.now() - 150000
   },
   {
     id: "seed-3",
-    text: "Can't wait for our next cozy date night! Coffee, chocolate cookies, cozy movie marathon, and endless warm cuddles. You + Me = Perfection. ☕🍪🧸",
+    text: "Daily reminder to get hydrated bb 💦 Drink water and show me your evidenceee 🫵🏻",
     shape: "scroll",
-    color: "#ffead2", // Warm Peach
+    color: "#d8f3dc", // Mint Green
     pattern: "grid",
+    emojiTheme: "cafe",
+    createdAt: Date.now() - 140000
+  },
+  {
+    id: "seed-4",
+    text: "Do you hear something 👀\nIt's my heart fluttering for youu💓\nTake a picture of you and doggie and send to mee my handsome hamsterrr",
+    shape: "card",
+    color: "#e2e2ff", // Lilac
+    pattern: "stripes",
+    emojiTheme: "hearts",
+    createdAt: Date.now() - 130000
+  },
+  {
+    id: "seed-5",
+    text: "Thank you for always being by my side, cheering me on when I needed you, accompanying me when I am down. You are the best gift I can ever ask for I love you<3",
+    shape: "heart",
+    color: "#ffead2", // Warm Peach
+    pattern: "plain",
+    emojiTheme: "flowers",
+    createdAt: Date.now() - 120000
+  },
+  {
+    id: "seed-6",
+    text: "Bb how are you feeling now? Your bb is always here to talk to you okii hamster love love love love loveeeee uuuuu 🐹",
+    shape: "scalloped",
+    color: "#f3c4fb", // Sweet Lavender
+    pattern: "hearts",
+    emojiTheme: "cats",
+    createdAt: Date.now() - 110000
+  },
+  {
+    id: "seed-7",
+    text: "i wanna baobao ni 🫂 are you ready for our upcoming baobao please hug me real tight i miss u bb",
+    shape: "scroll",
+    color: "#ffccd5", // Soft Pink
+    pattern: "dotted",
+    emojiTheme: "flowers",
+    createdAt: Date.now() - 100000
+  },
+  {
+    id: "seed-8",
+    text: "OMG OMG WEISHEME THIS GUY WHO IS READING THIS RN SO SHUAIII I LOVE YOUUUU\nDo you love meee?",
+    shape: "card",
+    color: "#ffead2", // Warm Peach
+    pattern: "hearts",
+    emojiTheme: "hearts",
+    createdAt: Date.now() - 90000
+  },
+  {
+    id: "seed-9",
+    text: "Are you in the midst of preparing my gifttttt 🎁 wat r u gonna give mee i am so so exciteddd (pwease pwease be huggy and kissy)",
+    shape: "scalloped",
+    color: "#d8f3dc", // Mint Green
+    pattern: "grid",
+    emojiTheme: "cafe",
+    createdAt: Date.now() - 80000
+  },
+  {
+    id: "seed-10",
+    text: "Is my baobei stressed? Baobao ni biii \nCan you drink some water and fold an origami for mee todayy? Permission to drink milo/naicha approvee",
+    shape: "scroll",
+    color: "#fefae0", // Custard Yellow
+    pattern: "plain",
+    emojiTheme: "flowers",
+    createdAt: Date.now() - 70000
+  },
+  {
+    id: "seed-11",
+    text: "Tdy i demand for a no brawl night!!! Unless unless u sajiao hehehehe",
+    shape: "heart",
+    color: "#e2e2ff", // Lilac
+    pattern: "stripes",
+    emojiTheme: "hearts",
+    createdAt: Date.now() - 60000
+  },
+  {
+    id: "seed-12",
+    text: "Repeat three times to yourself loudly: \nI am very very lihai\nI am very very smart\nI am very very brave\n\nYou better repeat exactly horrrr doggie watching youu",
+    shape: "card",
+    color: "#ffccd5", // Soft Pink
+    pattern: "dotted",
+    emojiTheme: "space",
+    createdAt: Date.now() - 50000
+  },
+  {
+    id: "seed-13",
+    text: "Is my baobei very tired nowww? If you are/if you are not, hamster command you to do the following:\n1. Send video note to hammy\n2. Open spotify and turn on 几分之几\n3. close your eyes, listen and relax until the song is over\n4. send hammy another video note",
+    shape: "scroll",
+    color: "#f3c4fb", // Sweet Lavender
+    pattern: "grid",
+    emojiTheme: "cats",
+    createdAt: Date.now() - 40000
+  },
+  {
+    id: "seed-14",
+    text: "Wo der baobei zui zui bangggg <3 Can i challenge you to clean your desk todayyy?",
+    shape: "scalloped",
+    color: "#d8f3dc", // Mint Green
+    pattern: "plain",
     emojiTheme: "cafe",
     createdAt: Date.now() - 30000
   },
   {
-    id: "seed-4",
-    text: "You make my heart skip a beat every single time you smile or hold my hand. I love you to the moon and back, through every galaxy! 🌌🌙✨",
+    id: "seed-15",
+    text: "You are my evangeline ✨\nThank you for brightening up my life and giving me direction and hope when the night is dark \nI love you ❤️",
     shape: "heart",
-    color: "#d8f3dc", // Mint Green
-    pattern: "stripes",
+    color: "#ffead2", // Warm Peach
+    pattern: "hearts",
     emojiTheme: "space",
     createdAt: Date.now() - 20000
   },
   {
-    id: "seed-5",
-    text: "Thank you for always being my rock, listening to my silly stories, and loving me for exactly who I am. You make my life a beautiful dream. 🧸🐾💕",
-    shape: "scalloped",
-    color: "#fefae0", // Lemon Custard
-    pattern: "plain",
-    emojiTheme: "cats",
+    id: "seed-16",
+    text: "Sing the next lineee: 就是爱你爱着你～",
+    shape: "card",
+    color: "#e2e2ff", // Lilac
+    pattern: "stripes",
+    emojiTheme: "flowers",
     createdAt: Date.now() - 10000
   }
 ];
