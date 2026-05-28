@@ -285,8 +285,12 @@ async function loadFromCloud() {
     const res = await fetch(`/api/notes?bottle=${encodeURIComponent(bottleId)}`);
     const data = await res.json();
 
-    if (data.code === "KV_NOT_CONFIGURED") {
-      // Cloud is deployed but KV not connected yet — fall back gracefully
+    if (
+      data.code === "KV_NOT_CONFIGURED" ||
+      data.code === "EDGE_CONFIG_NOT_CONFIGURED" ||
+      data.code === "VERCEL_TOKEN_MISSING"
+    ) {
+      // Cloud not yet configured — fall back gracefully to local storage
       loadFromLocal();
       setCloudStatus("local", "Cloud not configured — using local storage", true);
       return;
